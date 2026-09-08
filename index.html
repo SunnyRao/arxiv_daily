@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>arXiv 论文日报</title>
+<style>
+:root {
+  --primary: #2563eb; --primary-dark: #1d4ed8; --bg: #f8fafc;
+  --card: #ffffff; --text: #1e293b; --text2: #64748b; --border: #e2e8f0;
+  --accent: #f59e0b; --radius: 10px; --shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.6; }
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+  color: white; padding: 28px 0; margin-bottom: 24px; }
+.header h1 { font-size: 1.6rem; font-weight: 700; }
+.header .sub { opacity: .85; font-size: .9rem; margin-top: 4px; }
+.header a { color: white; }
+.breadcrumb { font-size: .85rem; opacity: .8; margin-bottom: 6px; }
+
+/* Date Cards (index) */
+.date-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px; padding-bottom: 40px; }
+.date-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; box-shadow: var(--shadow); transition: box-shadow .2s; }
+.date-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.date-card h2 { font-size: 1.2rem; margin-bottom: 8px; }
+.date-card .stat { color: var(--text2); font-size: .9rem; }
+.date-card .cats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.cat-badge { display: inline-block; background: #eff6ff; color: var(--primary);
+  padding: 2px 10px; border-radius: 12px; font-size: .78rem; font-weight: 500; }
+
+/* Tabs */
+.tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+.tab { padding: 10px 24px; cursor: pointer; font-weight: 600; color: var(--text2);
+  border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Report */
+.report-body h1 { font-size: 1.5rem; margin: 24px 0 12px; }
+.report-body h2 { font-size: 1.3rem; margin: 20px 0 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border); }
+.report-body h3 { font-size: 1.1rem; margin: 16px 0 8px; color: var(--primary-dark); }
+.report-body h4 { font-size: 1rem; margin: 12px 0 6px; }
+.report-body p { margin: 8px 0; }
+.report-body ul { padding-left: 24px; margin: 6px 0; }
+.report-body li { margin: 4px 0; }
+.report-body blockquote { border-left: 3px solid var(--primary); padding: 8px 16px;
+  background: #f0f9ff; margin: 10px 0; border-radius: 0 6px 6px 0; }
+.report-body hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+.report-body .table-wrap { overflow-x: auto; margin: 10px 0; }
+.report-body table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.report-body th, .report-body td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; }
+.report-body th { background: #f1f5f9; font-weight: 600; }
+.report-body code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-size: .88em; }
+.report-body strong { color: #0f172a; }
+
+/* Search & Filter bar */
+.toolbar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.search-box { flex: 1; min-width: 200px; padding: 10px 16px; border: 1px solid var(--border);
+  border-radius: var(--radius); font-size: .95rem; outline: none; }
+.search-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+.filter-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px;
+  background: var(--card); cursor: pointer; font-size: .82rem; transition: all .15s; }
+.filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+.filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.paper-count { color: var(--text2); font-size: .85rem; padding: 4px 0; }
+
+/* Paper Cards */
+.paper-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 40px; }
+.paper-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px 20px; box-shadow: var(--shadow); }
+.paper-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.1); }
+.paper-title { font-size: 1.05rem; font-weight: 600; line-height: 1.4; }
+.paper-title a { color: var(--text); }
+.paper-title a:hover { color: var(--primary); text-decoration: none; }
+.paper-title-zh { font-size: 1rem; font-weight: 500; color: #334155; margin-top: 4px; line-height: 1.5; }
+.paper-meta { color: var(--text2); font-size: .82rem; margin: 6px 0; }
+.paper-abstract { color: var(--text2); font-size: .88rem; margin: 8px 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.paper-abstract.expanded { -webkit-line-clamp: unset; }
+.paper-abstract-zh { color: #475569; font-size: .88rem; margin: 6px 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  padding: 8px 12px; background: #f8fafc; border-radius: 6px; border-left: 3px solid var(--primary); }
+.paper-abstract-zh.expanded { -webkit-line-clamp: unset; }
+.paper-abstract-zh .label { font-size: .72rem; color: var(--primary); font-weight: 600;
+  display: inline-block; margin-bottom: 2px; }
+.paper-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.paper-tag { font-size: .72rem; padding: 2px 8px; border-radius: 10px;
+  background: #f1f5f9; color: var(--text2); }
+.paper-tag.highlight { background: #fef3c7; color: #92400e; }
+.paper-actions { margin-top: 8px; display: flex; gap: 12px; }
+.paper-actions a { font-size: .85rem; }
+.expand-btn { background: none; border: none; color: var(--primary); cursor: pointer;
+  font-size: .82rem; padding: 0; margin-top: 4px; }
+
+/* Score badge (fuzzy tier labels) */
+.score-badge { display: inline-block; padding: 2px 8px; border-radius: 8px;
+  font-size: .75rem; font-weight: 600; }
+.score-high { background: #dcfce7; color: #166534; }
+.score-mid { background: #fef9c3; color: #854d0e; }
+.score-low { background: #f1f5f9; color: #64748b; }
+
+/* Topic tags from analysis */
+.topics-bar { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 16px; }
+.topic-tag { background: #ede9fe; color: #6d28d9; padding: 3px 10px;
+  border-radius: 12px; font-size: .78rem; }
+
+.sort-btns { display: flex; gap: 4px; }
+.sort-btn { padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--card); cursor: pointer; font-size: .82rem; transition: all .15s;
+  white-space: nowrap; }
+.sort-btn:hover { border-color: var(--primary); color: var(--primary); }
+.sort-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text2); }
+
+@media (max-width: 640px) {
+  .date-grid { grid-template-columns: 1fr; }
+  .tab { padding: 8px 14px; font-size: .9rem; }
+  .toolbar { flex-direction: column; }
+  .header h1 { font-size: 1.3rem; }
+}
+</style>
+<script type="module" defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{"token": "380cee147deb428f853010b43106e9d1"}"></script>
+</head>
+<body>
+<div class="header">
+  <div class="container">
+    
+    <h1>arXiv 论文日报</h1>
+    <div class="sub">arXiv 每日论文分析 · 自动生成</div>
+  </div>
+</div>
+<div class="container">
+<h2 style="margin: 20px 0 12px; font-size: 1.2rem;">📚 每日报告</h2><div class="date-grid">
+<a href="2026-09-07/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-09-07</h2>
+  <div class="stat">共 591 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (110)</span><span class="cat-badge">机器人 (Robotics) (41)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (205)</span><span class="cat-badge">机器学习 (Machine Learning) (137)</span><span class="cat-badge">计算语言学 (NLP) (98)</span></div>
+</div>
+</a>
+<a href="2026-09-04/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-09-04</h2>
+  <div class="stat">共 608 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (112)</span><span class="cat-badge">机器人 (Robotics) (48)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (165)</span><span class="cat-badge">机器学习 (Machine Learning) (168)</span><span class="cat-badge">计算语言学 (NLP) (115)</span></div>
+</div>
+</a>
+<a href="2026-09-03/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-09-03</h2>
+  <div class="stat">共 596 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (136)</span><span class="cat-badge">机器人 (Robotics) (38)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (162)</span><span class="cat-badge">机器学习 (Machine Learning) (159)</span><span class="cat-badge">计算语言学 (NLP) (101)</span></div>
+</div>
+</a>
+<a href="2026-09-02/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-09-02</h2>
+  <div class="stat">共 898 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (152)</span><span class="cat-badge">机器人 (Robotics) (50)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (309)</span><span class="cat-badge">机器学习 (Machine Learning) (202)</span><span class="cat-badge">计算语言学 (NLP) (185)</span></div>
+</div>
+</a>
+<a href="2026-09-01/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-09-01</h2>
+  <div class="stat">共 1462 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (316)</span><span class="cat-badge">机器人 (Robotics) (88)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (424)</span><span class="cat-badge">机器学习 (Machine Learning) (336)</span><span class="cat-badge">计算语言学 (NLP) (298)</span></div>
+</div>
+</a>
+<a href="2026-08-31/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-08-31</h2>
+  <div class="stat">共 515 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (93)</span><span class="cat-badge">机器人 (Robotics) (30)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (190)</span><span class="cat-badge">机器学习 (Machine Learning) (120)</span><span class="cat-badge">计算语言学 (NLP) (82)</span></div>
+</div>
+</a>
+<a href="2026-08-28/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-08-28</h2>
+  <div class="stat">共 662 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (114)</span><span class="cat-badge">机器人 (Robotics) (46)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (196)</span><span class="cat-badge">机器学习 (Machine Learning) (157)</span><span class="cat-badge">计算语言学 (NLP) (149)</span></div>
+</div>
+</a>
+<a href="2026-08-27/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-08-27</h2>
+  <div class="stat">共 663 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (107)</span><span class="cat-badge">机器人 (Robotics) (51)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (209)</span><span class="cat-badge">机器学习 (Machine Learning) (188)</span><span class="cat-badge">计算语言学 (NLP) (108)</span></div>
+</div>
+</a>
+<a href="2026-08-26/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-08-26</h2>
+  <div class="stat">共 626 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (112)</span><span class="cat-badge">机器人 (Robotics) (42)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (228)</span><span class="cat-badge">机器学习 (Machine Learning) (155)</span><span class="cat-badge">计算语言学 (NLP) (89)</span></div>
+</div>
+</a>
+<a href="2026-08-25/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-08-25</h2>
+  <div class="stat">共 1183 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (234)</span><span class="cat-badge">机器人 (Robotics) (92)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (362)</span><span class="cat-badge">机器学习 (Machine Learning) (291)</span><span class="cat-badge">计算语言学 (NLP) (204)</span></div>
+</div>
+</a>
+<a href="2026-08-24/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-08-24</h2>
+  <div class="stat">共 539 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (103)</span><span class="cat-badge">机器人 (Robotics) (37)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (200)</span><span class="cat-badge">机器学习 (Machine Learning) (112)</span><span class="cat-badge">计算语言学 (NLP) (87)</span></div>
+</div>
+</a>
+<a href="2026-08-21/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-08-21</h2>
+  <div class="stat">共 472 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (86)</span><span class="cat-badge">机器人 (Robotics) (38)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (145)</span><span class="cat-badge">机器学习 (Machine Learning) (127)</span><span class="cat-badge">计算语言学 (NLP) (76)</span></div>
+</div>
+</a>
+<a href="2026-08-20/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>📅 2026-08-20</h2>
+  <div class="stat">共 586 篇论文 · 5 个领域</div>
+  <div class="cats"><span class="cat-badge">计算机视觉 (Computer Vision) (94)</span><span class="cat-badge">机器人 (Robotics) (38)</span><span class="cat-badge">人工智能 (Artificial Intelligence) (186)</span><span class="cat-badge">机器学习 (Machine Learning) (169)</span><span class="cat-badge">计算语言学 (NLP) (99)</span></div>
+</div>
+</a></div>
+<h2 style="margin: 20px 0 12px; font-size: 1.2rem;">📈 周报/月报</h2><div class="date-grid">
+<a href="periods/period_2026-08-24~2026-08-28/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>🗓️ 周报 · 2026-08-24/2026-08-28</h2>
+  <div class="stat">5 天 · 3673 篇论文</div>
+</div>
+</a>
+<a href="periods/period_2026-08-17~2026-08-21/index.html" style="text-decoration:none;color:inherit">
+<div class="date-card">
+  <h2>🗓️ 周报 · 2026-08-17/2026-08-21</h2>
+  <div class="stat">2 天 · 1058 篇论文</div>
+</div>
+</a></div>
+</div>
+<script>
+function _escapeHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var group = this.closest('.page-tabs');
+      group.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+      this.classList.add('active');
+      var target = this.dataset.tab;
+      group.parentElement.querySelectorAll('.tab-panel').forEach(function(p){
+        p.classList.remove('active');
+      });
+      document.getElementById(target).classList.add('active');
+      if (target === 'panel-papers') loadPapers();
+    });
+  });
+
+  // Search
+  var searchBox = document.getElementById('paper-search');
+  if (searchBox) {
+    searchBox.addEventListener('input', filterPapers);
+  }
+
+  // Category filter
+  document.querySelectorAll('.filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      filterPapers();
+    });
+  });
+
+  // Sort
+  document.querySelectorAll('.sort-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.sort-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      sortPapers(this.dataset.sort);
+    });
+  });
+
+  // Expand abstract (toggle both EN and ZH)
+  document.querySelectorAll('.expand-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var card = this.closest('.paper-card');
+      var absEn = card.querySelector('.paper-abstract');
+      var absZh = card.querySelector('.paper-abstract-zh');
+      if (absEn) absEn.classList.toggle('expanded');
+      if (absZh) absZh.classList.toggle('expanded');
+      var expanded = absEn && absEn.classList.contains('expanded');
+      this.textContent = expanded ? '收起' : '展开';
+    });
+  });
+});
+
+function filterPapers() {
+  var query = (document.getElementById('paper-search').value || '').toLowerCase();
+  var activeFilter = document.querySelector('.filter-btn.active');
+  var category = activeFilter ? activeFilter.dataset.cat : 'all';
+  var cards = document.querySelectorAll('.paper-card');
+  var visible = 0;
+
+  cards.forEach(function(card) {
+    var title = card.dataset.title || '';
+    var abs = card.dataset.abstract || '';
+    var cat = card.dataset.category || '';
+    var authors = card.dataset.authors || '';
+
+    var titleZh = card.dataset.titleZh || '';
+    var absZh = card.dataset.abstractZh || '';
+
+    var matchText = !query || title.indexOf(query) > -1 || abs.indexOf(query) > -1
+      || authors.indexOf(query) > -1 || titleZh.indexOf(query) > -1 || absZh.indexOf(query) > -1;
+    var matchCat = category === 'all' || (' ' + cat + ' ').indexOf(' ' + category + ' ') > -1;
+
+    if (matchText && matchCat) {
+      card.style.display = '';
+      visible++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  var counter = document.getElementById('paper-count');
+  if (counter) counter.textContent = '显示 ' + visible + ' / ' + cards.length + ' 篇';
+}
+
+function sortPapers(mode) {
+  var list = document.querySelector('.paper-list');
+  if (!list) return;
+  var cards = Array.prototype.slice.call(list.querySelectorAll('.paper-card'));
+  cards.sort(function(a, b) {
+    if (mode === 'score') {
+      var sa = parseInt(a.dataset.score) || 0;
+      var sb = parseInt(b.dataset.score) || 0;
+      if (sa !== sb) return sb - sa;
+    }
+    return parseInt(a.dataset.index || 0) - parseInt(b.dataset.index || 0);
+  });
+  cards.forEach(function(card) { list.appendChild(card); });
+}
+
+function renderPaperCard(p, idx) {
+  var e = _escapeHtml;
+  var scoreHtml = '';
+  if (p.score >= 8) scoreHtml = '<span class="score-badge score-high">🔥 重点关注</span>';
+  else if (p.score >= 5) scoreHtml = '<span class="score-badge score-mid">⭐ 推荐阅读</span>';
+  else if (p.score > 0) scoreHtml = '<span class="score-badge score-low">📌 值得关注</span>';
+  var titleZhHtml = p.title_zh ? '<div class="paper-title-zh">' + e(p.title_zh) + '</div>' : '';
+  var absZhHtml = p.summary_zh
+    ? '<div class="paper-abstract-zh"><span class="label">中文摘要</span>' + e(p.summary_zh) + '</div>'
+    : '';
+  var tagsHtml = '';
+  if (p.announce_type && p.announce_type !== 'unknown')
+    tagsHtml += '<span class="paper-tag highlight">' + e(p.announce_type) + '</span>';
+  p.cat_tags.forEach(function(c) {
+    tagsHtml += '<span class="paper-tag' + (c.hl ? ' highlight' : '') + '">' + e(c.name) + '</span>';
+  });
+  return '<div class="paper-card" data-title="' + e(p.title.toLowerCase()) + '"'
+    + ' data-abstract="' + e((p.abstract||'').substring(0,500).toLowerCase()) + '"'
+    + ' data-title-zh="' + e((p.title_zh||'').toLowerCase()) + '"'
+    + ' data-abstract-zh="' + e((p.summary_zh||'').substring(0,500).toLowerCase()) + '"'
+    + ' data-category="' + e((p.all_cats || [p.primary_cat]).join(' ')) + '"'
+    + ' data-authors="' + e(p.authors.toLowerCase()) + '"'
+    + ' data-score="' + p.score + '" data-index="' + idx + '">'
+    + '<div class="paper-title"><a href="' + e(p.abs_url) + '" target="_blank">' + e(p.title) + '</a> ' + scoreHtml + '</div>'
+    + titleZhHtml
+    + '<div class="paper-meta">' + e(p.authors) + '</div>'
+    + '<div class="paper-abstract">' + e(p.abstract) + '</div>'
+    + absZhHtml
+    + '<button class="expand-btn">展开</button>'
+    + '<div class="paper-tags">' + tagsHtml + '</div>'
+    + '<div class="paper-actions">'
+    + '<a href="' + e(p.abs_url) + '" target="_blank">📄 Abstract</a>'
+    + '<a href="' + e(p.pdf_url) + '" target="_blank">📥 PDF</a>'
+    + '</div></div>';
+}
+
+function renderPaperList(papers) {
+  var list = document.querySelector('.paper-list');
+  if (!list) return;
+  var html = '';
+  papers.forEach(function(p, i) { html += renderPaperCard(p, i); });
+  list.innerHTML = html;
+  setupExpandButtons();
+}
+
+function setupExpandButtons() {
+  document.querySelectorAll('.expand-btn').forEach(function(btn) {
+    btn.onclick = function() {
+      var card = this.closest('.paper-card');
+      var absEn = card.querySelector('.paper-abstract');
+      var absZh = card.querySelector('.paper-abstract-zh');
+      if (absEn) absEn.classList.toggle('expanded');
+      if (absZh) absZh.classList.toggle('expanded');
+      var expanded = absEn && absEn.classList.contains('expanded');
+      this.textContent = expanded ? '收起' : '展开';
+    };
+  });
+}
+
+var _papersLoaded = false;
+function loadPapers() {
+  if (_papersLoaded) return;
+  var list = document.querySelector('.paper-list');
+  if (!list) return;
+  list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">📦 加载论文数据中...</div>';
+  fetch('papers.json').then(function(r) { return r.json(); }).then(function(papers) {
+    _papersLoaded = true;
+    renderPaperList(papers);
+  }).catch(function(err) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">论文数据加载失败</div>';
+  });
+}
+</script>
+</body>
+</html>

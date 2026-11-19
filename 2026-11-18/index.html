@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>arXiv 论文日报 · 2026-11-18</title>
+<style>
+:root {
+  --primary: #2563eb; --primary-dark: #1d4ed8; --bg: #f8fafc;
+  --card: #ffffff; --text: #1e293b; --text2: #64748b; --border: #e2e8f0;
+  --accent: #f59e0b; --radius: 10px; --shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.6; }
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+  color: white; padding: 28px 0; margin-bottom: 24px; }
+.header h1 { font-size: 1.6rem; font-weight: 700; }
+.header .sub { opacity: .85; font-size: .9rem; margin-top: 4px; }
+.header a { color: white; }
+.breadcrumb { font-size: .85rem; opacity: .8; margin-bottom: 6px; }
+
+/* Date Cards (index) */
+.date-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px; padding-bottom: 40px; }
+.date-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; box-shadow: var(--shadow); transition: box-shadow .2s; }
+.date-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.date-card h2 { font-size: 1.2rem; margin-bottom: 8px; }
+.date-card .stat { color: var(--text2); font-size: .9rem; }
+.date-card .cats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.cat-badge { display: inline-block; background: #eff6ff; color: var(--primary);
+  padding: 2px 10px; border-radius: 12px; font-size: .78rem; font-weight: 500; }
+
+/* Tabs */
+.tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+.tab { padding: 10px 24px; cursor: pointer; font-weight: 600; color: var(--text2);
+  border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Report */
+.report-body h1 { font-size: 1.5rem; margin: 24px 0 12px; }
+.report-body h2 { font-size: 1.3rem; margin: 20px 0 10px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border); }
+.report-body h3 { font-size: 1.1rem; margin: 16px 0 8px; color: var(--primary-dark); }
+.report-body h4 { font-size: 1rem; margin: 12px 0 6px; }
+.report-body p { margin: 8px 0; }
+.report-body ul { padding-left: 24px; margin: 6px 0; }
+.report-body li { margin: 4px 0; }
+.report-body blockquote { border-left: 3px solid var(--primary); padding: 8px 16px;
+  background: #f0f9ff; margin: 10px 0; border-radius: 0 6px 6px 0; }
+.report-body hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+.report-body .table-wrap { overflow-x: auto; margin: 10px 0; }
+.report-body table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.report-body th, .report-body td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; }
+.report-body th { background: #f1f5f9; font-weight: 600; }
+.report-body code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-size: .88em; }
+.report-body strong { color: #0f172a; }
+
+/* Search & Filter bar */
+.toolbar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.search-box { flex: 1; min-width: 200px; padding: 10px 16px; border: 1px solid var(--border);
+  border-radius: var(--radius); font-size: .95rem; outline: none; }
+.search-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+.filter-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px;
+  background: var(--card); cursor: pointer; font-size: .82rem; transition: all .15s; }
+.filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+.filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.paper-count { color: var(--text2); font-size: .85rem; padding: 4px 0; }
+
+/* Paper Cards */
+.paper-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 40px; }
+.paper-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px 20px; box-shadow: var(--shadow); }
+.paper-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.1); }
+.paper-title { font-size: 1.05rem; font-weight: 600; line-height: 1.4; }
+.paper-title a { color: var(--text); }
+.paper-title a:hover { color: var(--primary); text-decoration: none; }
+.paper-title-zh { font-size: 1rem; font-weight: 500; color: #334155; margin-top: 4px; line-height: 1.5; }
+.paper-meta { color: var(--text2); font-size: .82rem; margin: 6px 0; }
+.paper-abstract { color: var(--text2); font-size: .88rem; margin: 8px 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.paper-abstract.expanded { -webkit-line-clamp: unset; }
+.paper-abstract-zh { color: #475569; font-size: .88rem; margin: 6px 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  padding: 8px 12px; background: #f8fafc; border-radius: 6px; border-left: 3px solid var(--primary); }
+.paper-abstract-zh.expanded { -webkit-line-clamp: unset; }
+.paper-abstract-zh .label { font-size: .72rem; color: var(--primary); font-weight: 600;
+  display: inline-block; margin-bottom: 2px; }
+.paper-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.paper-tag { font-size: .72rem; padding: 2px 8px; border-radius: 10px;
+  background: #f1f5f9; color: var(--text2); }
+.paper-tag.highlight { background: #fef3c7; color: #92400e; }
+.paper-actions { margin-top: 8px; display: flex; gap: 12px; }
+.paper-actions a { font-size: .85rem; }
+.expand-btn { background: none; border: none; color: var(--primary); cursor: pointer;
+  font-size: .82rem; padding: 0; margin-top: 4px; }
+
+/* Score badge (fuzzy tier labels) */
+.score-badge { display: inline-block; padding: 2px 8px; border-radius: 8px;
+  font-size: .75rem; font-weight: 600; }
+.score-high { background: #dcfce7; color: #166534; }
+.score-mid { background: #fef9c3; color: #854d0e; }
+.score-low { background: #f1f5f9; color: #64748b; }
+
+/* Topic tags from analysis */
+.topics-bar { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 16px; }
+.topic-tag { background: #ede9fe; color: #6d28d9; padding: 3px 10px;
+  border-radius: 12px; font-size: .78rem; }
+
+.sort-btns { display: flex; gap: 4px; }
+.sort-btn { padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--card); cursor: pointer; font-size: .82rem; transition: all .15s;
+  white-space: nowrap; }
+.sort-btn:hover { border-color: var(--primary); color: var(--primary); }
+.sort-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text2); }
+
+@media (max-width: 640px) {
+  .date-grid { grid-template-columns: 1fr; }
+  .tab { padding: 8px 14px; font-size: .9rem; }
+  .toolbar { flex-direction: column; }
+  .header h1 { font-size: 1.3rem; }
+}
+</style>
+<script type="module" defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{"token": "380cee147deb428f853010b43106e9d1"}"></script>
+</head>
+<body>
+<div class="header">
+  <div class="container">
+    <div class="breadcrumb"><a href="../index.html">← 返回日期列表</a> · 2026-11-18</div>
+    <h1>arXiv 论文日报 · 2026-11-18</h1>
+    <div class="sub">arXiv 每日论文分析 · 自动生成</div>
+  </div>
+</div>
+<div class="container">
+
+<div class="page-tabs">
+  <div class="tabs">
+    <div class="tab active" data-tab="panel-report">📊 分析报告</div>
+    <div class="tab" data-tab="panel-papers">📚 论文列表</div>
+  </div>
+  <div id="panel-report" class="tab-panel active"><div class="report-body"><h1>arXiv 每日论文分析报告</h1>
+
+<blockquote><strong>日期</strong>: 2026-11-18</blockquote>
+<blockquote><strong>生成时间</strong>: 2026-11-18 13:37 (UTC+8)</blockquote>
+<blockquote><strong>覆盖领域</strong>: 计算机视觉 (Computer Vision), 机器人 (Robotics), 人工智能 (Artificial Intelligence), 机器学习 (Machine Learning), 计算语言学 (NLP)</blockquote>
+
+<hr/>
+
+<h2>一、总体统计</h2>
+
+<ul>
+<li><strong>今日论文总数</strong>: 868 篇</li>
+<li><strong>覆盖领域数</strong>: 5 个</li>
+</ul>
+
+<div class="table-wrap"><table>
+<tr>
+<th>领域</th>
+<th>总论文数</th>
+<th>新提交</th>
+<th>交叉引用</th>
+</tr>
+<tr>
+<td>计算机视觉 (Computer Vision)</td>
+<td>207</td>
+<td>175</td>
+<td>32</td>
+</tr>
+<tr>
+<td>机器人 (Robotics)</td>
+<td>89</td>
+<td>65</td>
+<td>24</td>
+</tr>
+<tr>
+<td>人工智能 (Artificial Intelligence)</td>
+<td>259</td>
+<td>109</td>
+<td>150</td>
+</tr>
+<tr>
+<td>机器学习 (Machine Learning)</td>
+<td>211</td>
+<td>107</td>
+<td>104</td>
+</tr>
+<tr>
+<td>计算语言学 (NLP)</td>
+<td>102</td>
+<td>60</td>
+<td>42</td>
+</tr>
+</table></div>
+
+<hr/>
+
+<h2>二、各领域详细分析</h2>
+
+<h3>计算机视觉 (Computer Vision) (207 篇)</h3>
+
+<p><strong>概述</strong>: 本批207篇计算机视觉领域论文呈现出基础模型架构创新与垂直场景落地双轮驱动的特征。研究热点高度集中于多模态大模型可靠性优化、视频世界模型与具身智能、3D高斯泼溅技术迭代、医学影像智能分析四大方向，同时事件相机、遥感视觉、可信安全等细分领域也涌现出大量扎实工作。架构层面，统一模态、统一任务的通用建模思路持续突破，像素级统一建模、4D感知基础模型等工作展现出颠覆传统技术范式的潜力。应用层面，自动驾驶、机器人、医疗、工业检测等实体场景的需求牵引作用显著，低延迟、端侧部署、小样本适配等落地导向的研究占比明显提升，整体研究从追求基准性能向解决真实世界复杂问题加速转变。</p>
+
+<h4>话题分布</h4>
+
+<div class="table-wrap"><table>
+<tr>
+<th>#</th>
+<th>话题方向</th>
+<th>论文数</th>
+<th>占比</th>
+<th>描述</th>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>多模态大模型与视觉语言模型</strong></td>
+<td>42</td>
+<td>████ 20.3%</td>
+<td>聚焦视觉语言模型、多模态大模型的推理、幻觉治理、效率优化、基准评测及多模态融合技术，覆盖图文、视频等多模态理解与生成任务。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>视频生成与世界模型</strong></td>
+<td>30</td>
+<td>██ 14.5%</td>
+<td>研究视频生成、视频世界模型、动作条件预测、长时序场景演化与交互模拟，支撑自动驾驶、机器人、内容创作等领域的动态场景建模。</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>3D视觉与场景重建</strong></td>
+<td>26</td>
+<td>██ 12.6%</td>
+<td>涵盖3D重建、高斯泼溅、SLAM、几何表示、CAD建模与空间感知，解决复杂场景的三维结构恢复、定位与渲染问题。</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>医学影像与病理计算</strong></td>
+<td>24</td>
+<td>██ 11.6%</td>
+<td>面向医学图像分割、病理全切片分析、疾病诊断、多模态医学配准与临床辅助决策，结合自监督、大模型技术提升医疗影像分析能力。</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>图像生成与扩散模型优化</strong></td>
+<td>22</td>
+<td>██ 10.6%</td>
+<td>围绕扩散模型、图像生成、编辑修复、推理加速与个性化生成，优化生成质量、效率与可控性，探索新型生成架构。</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>机器人与自动驾驶感知</strong></td>
+<td>21</td>
+<td>██ 10.1%</td>
+<td>服务机器人操作、自动驾驶场景的视觉感知、动作预测、协同感知与端到端决策，结合视觉语言动作模型提升具身智能水平。</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>遥感与环境视觉应用</strong></td>
+<td>14</td>
+<td>█ 6.8%</td>
+<td>面向遥感影像、林业、海洋、农业等领域的视觉分析，包括超分辨率、地物分类、目标检测与生态参数估算。</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>视觉模型安全、可解释性与鲁棒性</strong></td>
+<td>12</td>
+<td>█ 5.8%</td>
+<td>关注AI生成内容检测、模型水印、对抗攻击、可解释性与鲁棒性评测，保障视觉系统的可信性与安全性。</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>事件相机与新型视觉传感器</strong></td>
+<td>8</td>
+<td>█ 3.9%</td>
+<td>研究事件相机、高光谱、偏振等新型传感器的视觉算法，利用其高动态范围、低功耗特性解决极端场景下的检测与感知问题。</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>底层视觉与图像压缩修复</strong></td>
+<td>8</td>
+<td>█ 3.9%</td>
+<td>研究图像压缩、超分辨率、去噪、水下图像恢复等底层视觉任务，提升图像质量与传输存储效率。</td>
+</tr>
+</table></div>
+
+<h4>重点论文推荐</h4>
+
+<h3>1. <a href="https://arxiv.org/abs/2611.23144" target="_blank">$\pi^4$: A Foundation Model for 4D Scene Geometry and Motion</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.23144</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 4D场景感知, 基础模型, 几何重建, 运动估计, 多输入兼容</li>
+<li><strong>推荐理由</strong>: 提出统一的4D场景感知基础模型，可从单图、无序图像集或视频等非标定RGB观测中同时恢复密集几何、相机位姿、度量尺度、点轨迹与运动物体掩码，突破了传统3D/4D感知方法对输入形式的限制。该模型具备极强的通用性与泛化能力，为动态场景理解、自动驾驶、数字孪生等领域提供了统一的基础底座，有望重塑4D视觉的技术范式。</li>
+</ul>
+
+<h3>2. <a href="https://arxiv.org/abs/2611.22820" target="_blank">Pixel is All You Need</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22820</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 多模态统一, 像素建模, 视觉推理, 通用模型, 架构创新</li>
+<li><strong>推荐理由</strong>: 提出将文本、音频、动作等所有模态统一渲染到像素画布，由纯视觉模型完成跨模态推理的全新范式，首次系统性验证了视觉模型直接处理像素化文本的可行性，挑战了当前多模态模型分模态编码的主流架构。该研究为通用多模态统一建模提供了极简的新思路，可能推动多模态大模型架构的根本性变革，具备极高的理论与工程探索价值。</li>
+</ul>
+
+<h3>3. <a href="https://arxiv.org/abs/2611.23226" target="_blank">FastFrames: Video Generation at Interactive Latency</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.23226</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 视频生成, 自回归扩散, 低延迟, 交互式生成, 推理加速</li>
+<li><strong>推荐理由</strong>: 针对自回归视频扩散模型交互延迟过高的核心痛点，提出FastFrames系列快速自回归视频生成框架，将生成速度提升至可支撑流畅交互的水平，解决了交互式视频应用的核心瓶颈。该工作打通了视频生成技术从离线内容生产到实时交互场景的落地路径，对游戏、虚拟人、实时创作等产业具有显著的推动作用。</li>
+</ul>
+
+<h3>4. <a href="https://arxiv.org/abs/2611.23179" target="_blank">Say Less, Hallucinate Less? Diagnosing and Restoring Object Coverage in Preference-Optimized Vision-Language Models</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.23179</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 视觉语言模型, 偏好优化, 幻觉治理, 物体覆盖率, 模型诊断</li>
+<li><strong>推荐理由</strong>: 首次系统性揭示了视觉语言模型中偏好优化技术的隐性缺陷：降低幻觉的同时会显著降低物体覆盖率，且幻觉率下降并未带来集合预测性能的实质性提升，纠正了领域内对偏好优化效果的普遍认知偏差。该研究为VLM幻觉治理提供了全新的诊断视角与优化方向，对提升多模态大模型的可靠性具有重要的指导意义。</li>
+</ul>
+
+<h3>5. <a href="https://arxiv.org/abs/2611.23140" target="_blank">GameRealm: Grounding Visual Learning in Interactive Games</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.23140</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 视觉基础模型, 游戏数据集, 具身智能, 多模态标注, 物理智能</li>
+<li><strong>推荐理由</strong>: 构建了大规模、富标注的交互式游戏数据集GameRealm，解决了视觉基础模型训练数据碎片化、标注质量不一致、多模态监督有限的核心痛点，为物理智能视觉模型的训练提供了高质量的规模化数据支撑。游戏场景具备丰富的交互性与真实的物理规则，该数据集有望加速具身智能、通用视觉基础模型的研发进程。</li>
+</ul>
+
+
+<h4>研究趋势</h4>
+
+<p><strong>1. 世界模型成为动态视觉研究的核心热点，向多模态、多传感器、长时序与可交互方向快速演进</strong></p>
+
+<p>本次有30篇左右论文聚焦视频世界模型，覆盖自动驾驶三模态预测（86）、惯性状态演化（140）、全景场景持续演化（74）、规划可信度诊断（104）等方向，且大量工作与机器人、自动驾驶等具身场景深度结合，从单纯的视频生成转向支撑决策的物理世界模拟。</p>
+
+<p><strong>2. 视觉语言模型研究从性能提升转向可靠性、效率与落地适配，幻觉、鲁棒性与端侧部署成为重点</strong></p>
+
+<p>多篇论文针对VLM的幻觉缺陷（10）、场景安全漏洞（7）、视觉 token 压缩（75,116）、端侧轻量化部署（24）展开研究，同时涌现大量面向医疗、工业等垂直领域的适配工作（68,112），标志着VLM技术从通用能力竞赛走向产业落地的深水区。</p>
+
+<p><strong>3. 统一建模与架构创新持续突破，跨模态、跨任务、跨输入形式的通用模型成为重要探索方向</strong></p>
+
+<p>出现了统一4D几何与运动的基础模型π⁴（15）、全模态像素统一建模（67）、端到端像素空间扩散Transformer（45）、统一图像修复框架（152）等工作，打破了传统任务专属、模态专属的模型设计思路，追求更通用的视觉智能架构。</p>
+
+<p><strong>4. 3D视觉技术向高效化、边缘端与动态场景延伸，高斯泼溅相关技术呈现爆发式增长</strong></p>
+
+<p>本次有十余篇论文围绕3D高斯泼溅展开，覆盖移动端跨平台训练（148）、边缘端动态4DGS调度（170）、协同SLAM（149）、美学色彩编辑（28）等方向，同时3D重建从静态场景向铰接物体、动态人体等复杂对象拓展，技术落地进程显著加快。</p>
+
+<p><strong>5. 可信视觉研究体系不断完善，AI生成内容检测、模型可解释性与安全防护向更隐蔽的攻击场景延伸</strong></p>
+
+<p>研究覆盖压缩码流级生成视频检测（38）、跨生成器泛化的假图检测（76,92）、模型水印防移植（134）、视觉后门传播风险（120）、对抗性物理攻击（73）等方向，检测与防护手段从像素层面深入到模型内部与生产链路，安全评测维度更加全面。</p>
+
+
+<hr/>
+
+<h3>机器人 (Robotics) (89 篇)</h3>
+
+<p><strong>概述</strong>: 今日89篇机器人领域论文呈现出学习方法、控制理论与真实系统深度融合的特点。生成式策略、VLA和世界模型是最突出的方向，研究重点已从单一动作生成扩展到任务进展保证、交互修正、长时序预测、故障数据生成和高效部署。与此同时，安全与可信机器人获得大量关注，控制屏障函数、风险感知规划、形式化验证、运行时监控和持续合规共同构成多层次保障体系。腿足、人形和移动操作研究进一步贴近硬件约束，包括热限制、动态支撑、复杂地形和多机协作。定位建图则集中于退化环境、多传感器融合和资源受限平台。整体来看，论文普遍强调从仿真或数据驱动能力走向可验证、可部署、可泛化的真实机器人自主系统。</p>
+
+<h4>话题分布</h4>
+
+<div class="table-wrap"><table>
+<tr>
+<th>#</th>
+<th>话题方向</th>
+<th>论文数</th>
+<th>占比</th>
+<th>描述</th>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>机器人学习与生成式策略</strong></td>
+<td>19</td>
+<td>████ 21.6%</td>
+<td>聚焦扩散模型、流匹配、VLA、世界模型、模仿学习与强化学习，用于操作、导航和驾驶策略生成。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>运动规划、控制与安全</strong></td>
+<td>15</td>
+<td>███ 17.0%</td>
+<td>研究轨迹规划、鲁棒控制、控制屏障函数、风险约束规划以及复杂动力学系统的安全执行。</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>移动、腿足与人形机器人</strong></td>
+<td>13</td>
+<td>██ 14.8%</td>
+<td>覆盖四足、双足、单足和人形机器人的步态、平衡、避障、热约束运动及多机器人协作。</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>仿真、世界模型与数据生成</strong></td>
+<td>11</td>
+<td>██ 12.5%</td>
+<td>构建高保真或可微仿真环境，并利用世界模型生成交互场景、故障数据和可验证测试环境。</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>定位、建图与状态估计</strong></td>
+<td>8</td>
+<td>█ 9.1%</td>
+<td>研究激光、视觉、惯性、气压和滤波方法，以提升退化环境、资源受限平台和姿态估计的可靠性。</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>操作、触觉与灵巧交互</strong></td>
+<td>7</td>
+<td>█ 8.0%</td>
+<td>面向可变形物体、软组织、双臂操作和末端执行器跟踪，融合触觉、力觉、视觉与惯性反馈。</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>机器人系统、平台与应用</strong></td>
+<td>7</td>
+<td>█ 8.0%</td>
+<td>包括智能家居、工业移动操作、外骨骼、医疗手术、海洋机器人和网络安全等实际系统。</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>自主驾驶与交通场景</strong></td>
+<td>4</td>
+<td>█ 4.5%</td>
+<td>关注交通参与者预测、交互式世界模型、风险评估、漂移控制和端到端驾驶规划。</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>形式化方法、验证与安全合规</strong></td>
+<td>4</td>
+<td>█ 4.5%</td>
+<td>采用时序逻辑、行为树、Petri网、运行时监控和需求工程，保障机器人系统可信部署。</td>
+</tr>
+</table></div>
+
+<h4>重点论文推荐</h4>
+
+<h3>1. <a href="https://arxiv.org/abs/2611.22584" target="_blank">InteractVLA: Turning VLAs into Interactive Tools for Agentic Robotic Manipulation</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22584</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: VLA, 具身智能, 机器人操作, 智能体, 交互式控制</li>
+<li><strong>推荐理由</strong>: 该工作针对VLA策略在陌生指令和场景扰动下只能盲目重试的问题，将预训练VLA转化为可交互、可调控的工具，契合具身智能从单步策略走向智能体系统的核心方向。其方法若成熟，可显著降低人工接管成本并提升复杂操作任务的鲁棒性。</li>
+</ul>
+
+<h3>2. <a href="https://arxiv.org/abs/2611.22954" target="_blank">Sim2CBF: From Forward Simulations to Implicit Control Barrier Function Safety Filtering without Model Derivatives</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22954</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 控制屏障函数, 安全过滤, 前向仿真, 无导数方法, 故障避免</li>
+<li><strong>推荐理由</strong>: 论文提出无需模型导数、仅依赖前向仿真的控制屏障函数安全过滤框架，解决了复杂机器人交互中动力学难以精确建模的问题。该思路具有较强通用性，可连接数据驱动预测模型与可证明安全控制，对真实部署意义突出。</li>
+</ul>
+
+<h3>3. <a href="https://arxiv.org/abs/2611.22047" target="_blank">SE(3)-LIVOM: Adaptive Multi-LiDAR-Inertial-Visual Odometry and Mapping</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22047</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 多传感器融合, 激光-惯性-视觉里程计, 建图, 腿足机器人, 复杂环境</li>
+<li><strong>推荐理由</strong>: 该系统是IROS 2026 COMFORT挑战赛总冠军，面向坍塌建筑、工地和雪地等复杂场景，融合多激光雷达、惯性与视觉信息并实现实时运行。其工程完整性和极端环境适应性代表了多模态SLAM系统的重要进展。</li>
+</ul>
+
+<h3>4. <a href="https://arxiv.org/abs/2611.22367" target="_blank">FailureGen: Scalable Robot Failure Data Generation with World Models</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22367</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 世界模型, 失败数据生成, 机器人学习, 事件标注, 鲁棒性</li>
+<li><strong>推荐理由</strong>: 机器人失败数据稀缺是限制鲁棒策略和故障诊断发展的关键瓶颈，该工作利用世界模型复用真实失败轨迹并生成带时序事件标注的合成视频。它为大规模失败场景扩充、安全评估和策略改进提供了可扩展路径。</li>
+</ul>
+
+<h3>5. <a href="https://arxiv.org/abs/2611.22231" target="_blank">From Temperature-Limited to Battery-Limited Legged Locomotion</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22231</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 腿足机器人, 热感知控制, 强化学习, 持续运动, 硬件约束</li>
+<li><strong>推荐理由</strong>: 论文指出腿足机器人持续运动常受电机热保护而非电池容量限制，并通过热感知强化学习改变运动策略，使系统更接近电池受限运行。该问题具有很强的现实部署价值，也拓展了 locomotion 策略优化中的硬件约束建模。</li>
+</ul>
+
+
+<h4>研究趋势</h4>
+
+<p><strong>1. 生成式模型正从单纯动作生成转向任务约束、可交互和可执行的具身策略。</strong></p>
+
+<p>扩散采样、流匹配和VLA相关工作大量出现，例如任务收敛流匹配[35]、交互式VLA[37]、扩散噪声诊断[28]以及高效VLA执行[56]，研究重点从生成合理动作转向保证任务进展、延迟优化和行为可控。</p>
+
+<p><strong>2. 世界模型成为连接仿真、规划、数据生成和长时序推理的共同基础设施。</strong></p>
+
+<p>论文涵盖学习型腿足机器人模拟器审计[8]、交互式驾驶世界模型[31]、长时序操作世界模型[76]、失败数据生成[55]以及可执行记忆世界模型[60]，显示世界模型正在跨操作、驾驶和导航场景落地。</p>
+
+<p><strong>3. 安全研究从硬几何约束扩展到概率风险、语义风险和形式化全生命周期保障。</strong></p>
+
+<p>风险密度RRT*[33]、连续风险评估导航[73]、无导数CBF安全过滤[17]、行为树形式验证[47]和持续合规框架[84]共同表明，机器人安全正在结合学习模型、概率规划与形式化工程方法。</p>
+
+<p><strong>4. 多模态感知与状态估计强调退化环境、资源约束和复杂噪声下的鲁棒性。</strong></p>
+
+<p>资源感知激光惯性里程计[23]、隧道退化环境中的激光-惯性-视觉融合[52]、多传感器自适应SLAM[75]、气压重力估计[7]和乘性噪声滤波[40]均体现了对真实复杂部署条件的关注。</p>
+
+<p><strong>5. 机器人数据建设更加重视真实采集质量、人类视频迁移和跨本体泛化。</strong></p>
+
+<p>大规模真实机器人数据质量分析[51]、自我中心技能视频数据集[79]、无机器人双手数据采集[68]、人类视频到灵巧操作数据转换[81]以及零样本组合泛化[25]，反映数据效率和本体差异成为核心问题。</p>
+
+
+<hr/>
+
+<h3>人工智能 (Artificial Intelligence) (259 篇)</h3>
+
+<p><strong>概述</strong>: 今日arXiv共收录259篇人工智能领域论文，研究重心全面向自主智能体倾斜，形成自进化架构、安全治理、垂直落地三大核心主线。技术层面，智能体的技能演化、长期记忆、运行时优化及递归自我改进成为热点，同时行业开始理性反思编码模型基准分数与真实效能的脱钩问题，工程化成本与质量验证受到重视。安全研究从静态内容防护升级为跨场景全链路的动态治理，覆盖身份信任、攻击防御、决策审计等多个维度。多模态世界模型、具身智能持续向高效物理可信方向演进，科研、制造、医疗、金融等垂直领域的专用智能体大量涌现，推动AI从通用辅助工具向核心生产系统深度渗透，整体呈现技术深化、落地务实、治理同步完善的发展特征。</p>
+
+<h4>话题分布</h4>
+
+<div class="table-wrap"><table>
+<tr>
+<th>#</th>
+<th>话题方向</th>
+<th>论文数</th>
+<th>占比</th>
+<th>描述</th>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>智能体架构、自进化与技能记忆</strong></td>
+<td>46</td>
+<td>███ 17.8%</td>
+<td>聚焦自主智能体的运行框架、技能演化、长期记忆、递归自我改进及跨组织协作架构，覆盖从提示优化到智能体自主训练模型的全链路能力提升。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>多模态、视觉与世界模型</strong></td>
+<td>43</td>
+<td>███ 16.6%</td>
+<td>涵盖视觉语言模型、视频理解、三维生成、自动驾驶世界模型及多模态幻觉治理，推动感知、推理与物理场景建模的融合发展。</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>智能体安全、对齐与治理审计</strong></td>
+<td>42</td>
+<td>███ 16.2%</td>
+<td>研究大模型与智能体的安全对齐、注入攻击防御、行为审计、权限管控及伦理规范，涵盖医疗、金融、机器人等高风险场景的风险治理方案。</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>大模型训练、推理优化与基础理论</strong></td>
+<td>36</td>
+<td>██ 13.9%</td>
+<td>研究大模型的高效微调、量化压缩、推理加速、预训练归纳偏置及基础建模理论，覆盖从训练算法到部署优化的全栈技术。</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>垂直领域科学与工程智能体</strong></td>
+<td>33</td>
+<td>██ 12.7%</td>
+<td>将大模型与智能体技术应用于物理、化学、医疗、建筑、制造等科研与工业场景，构建领域专用的推理、设计与决策系统。</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>代码智能体与软件工程效能</strong></td>
+<td>25</td>
+<td>█ 9.7%</td>
+<td>围绕代码生成、调试、测试、文档维护及研发效能评估展开，探索编码智能体在真实开发流程中的实际产出、成本优化与质量验证。</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>RAG、知识检索与记忆系统</strong></td>
+<td>14</td>
+<td>█ 5.4%</td>
+<td>研究检索增强生成、证据治理、上下文管理与长期记忆架构，解决多源信息冲突、证据可信度及长上下文利用效率问题。</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>行业决策、推荐与预测系统</strong></td>
+<td>12</td>
+<td>█ 4.6%</td>
+<td>面向金融、交通、能源、零售等行业，探索大模型驱动的预测、推荐、调度与决策优化，结合强化学习提升复杂场景决策能力。</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>机器人、自动驾驶与具身智能</strong></td>
+<td>8</td>
+<td>█ 3.1%</td>
+<td>聚焦具身智能、机器人操控、自动驾驶端到端控制及运行时监控，推动智能体在物理世界的感知、规划与执行落地。</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>评测基准与可解释性研究</strong></td>
+<td>0</td>
+<td>█ 0.0%</td>
+<td></td>
+</tr>
+</table></div>
+
+<h4>重点论文推荐</h4>
+
+<h3>1. <a href="https://arxiv.org/abs/2611.23138" target="_blank">RSI-Prime: Training Models to Train Models</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.23138</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 递归自我改进, 模型训练, 大语言模型, 自进化智能体</li>
+<li><strong>推荐理由</strong>: 该论文直击递归自我改进（RSI）这一通用人工智能核心命题，首次系统化研究大模型自主执行模型训练的能力，为智能体自主迭代优化提供了基础框架。研究填补了大模型从“被训练对象”向“训练执行者”角色转变的领域空白，对未来自进化AI系统发展具有奠基性意义。</li>
+</ul>
+
+<h3>2. <a href="https://arxiv.org/abs/2611.23202" target="_blank">Agent Trust Infrastructure (ATI): A Federated Identity, Trust, Attestation, and Accountability Architecture for Cross-Organization Autonomous AI Agents</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.23202</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 智能体信任, 联邦身份, 跨组织协作, 远程证明, 问责架构</li>
+<li><strong>推荐理由</strong>: 针对跨组织智能体协作的身份验证与信任缺失痛点，提出了首个联邦式智能体信任基础设施架构，覆盖身份认证、远程证明与全链路问责。该方案为多主体智能体生态的安全落地提供了可落地的技术标准，有望成为企业级智能体互联的核心底层协议。</li>
+</ul>
+
+<h3>3. <a href="https://arxiv.org/abs/2611.23216" target="_blank">Higher-Scoring Coding Models Did Not Get More Work Done</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.23216</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 编码模型, 基准测试, 真实效能, 自然实验, AI编程</li>
+<li><strong>推荐理由</strong>: 该研究通过自然实验首次实证了编码模型基准分数与真实工作产出的脱钩问题，打破了行业唯基准分数论的普遍误区。研究结论对编码模型的研发导向、企业选型及效能评估体系都具有极强的现实指导价值，将推动行业从分数竞赛转向真实价值交付。</li>
+</ul>
+
+<h3>4. <a href="https://arxiv.org/abs/2611.22299" target="_blank">Harnesses That Improve Themselves: A Unifying Framework for Self-Improving Agent Harnesses</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22299</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 智能体运行时, 自改进系统, 统一框架, 上下文管理, 工具执行</li>
+<li><strong>推荐理由</strong>: 论文提出了自改进智能体运行时（Harness）的统一框架，明确了运行时软件与模型权重同等重要的核心地位，解决了不同模型适配性差、优化方法碎片化的问题。该框架为智能体系统的工程化落地与持续迭代提供了通用范式，具备很强的生态影响力。</li>
+</ul>
+
+<h3>5. <a href="https://arxiv.org/abs/2611.22971" target="_blank">SEAM: Computer-Use Agents Know the Harm Between Screens, and Commit It Anyway</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22971</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 计算机使用智能体, 安全基准, 跨屏幕攻击, 复合风险, AI安全</li>
+<li><strong>推荐理由</strong>: 该研究揭示了计算机使用智能体跨屏幕复合风险的新型安全漏洞，指出现有单屏安全基准的根本性缺陷，填补了多步骤跨界面操作的安全评测空白。研究提出的SEAM基准将推动智能体安全防护从单点检测转向全流程风险推理，对高权限智能体的安全落地至关重要。</li>
+</ul>
+
+
+<h4>研究趋势</h4>
+
+<p><strong>1. 智能体研究从单轮任务执行转向全生命周期自进化，技能、记忆与运行时框架成为核心优化方向</strong></p>
+
+<p>大量论文聚焦智能体自主改进，包括RSI-Prime的模型自主训练、EvoSkill的技能演化、EvoDisco的记忆策略发现，以及自改进Harness统一框架，同时出现多篇针对技能过时、记忆冲突治理的研究，形成完整的自进化技术栈。</p>
+
+<p><strong>2. AI安全研究从静态内容防护转向动态行为与全链路治理，高风险场景的审计与问责体系加速落地</strong></p>
+
+<p>安全类论文覆盖跨屏幕复合攻击检测、自适应注入防御、智能体动作可逆性分级、医疗决策轨迹审计、系统提示泄露攻防等方向，同时出现联邦信任基础设施、内容血缘治理等架构级方案，安全治理向运行时、全流程、场景化演进。</p>
+
+<p><strong>3. 编码智能体研究进入理性反思期，真实效能、成本优化与质量验证取代基准分数成为核心议题</strong></p>
+
+<p>多篇论文实证基准分数与真实产出脱钩、过度思考不提升决策质量，同时研究方向延伸至编码停止时机优化、上下文缓存成本控制、单元测试可信度、代码生命周期评估等工程化问题，行业评估体系从分数导向转向价值导向。</p>
+
+<p><strong>4. 世界模型与具身智能向高效、闭环、物理可信方向发展，自动驾驶与机器人场景落地加速</strong></p>
+
+<p>研究涵盖实时数据高效世界模型、潜空间规划的软硬件协同优化、闭环交互式驾驶世界模型、机器人故障数据生成、端到端自动驾驶模型等，同时大量工作引入物理约束提升模型可信度，推动仿真到真实部署的技术闭环。</p>
+
+<p><strong>5. 科研与工业领域的智能体应用走向深度专用化，从辅助工具升级为自主研究与生产系统</strong></p>
+
+<p>出现自主科研系统Colombo、DiscoveryAgent，量子化学、计算化学专用智能体，CAD/加工制造智能体，以及医药研发、建筑信息模型编辑等垂直场景系统，AI从通用辅助工具向领域核心生产系统渗透。</p>
+
+
+<hr/>
+
+<h3>机器学习 (Machine Learning) (211 篇)</h3>
+
+<p><strong>概述</strong>: 本批211篇论文呈现出大模型技术向纵深推理、高效部署与科学落地全面演进的格局。大语言模型研究聚焦自改进智能体、强化学习对齐及推理时扩展，同时学界开始集中反思基准分数与真实生产力的脱节，强调评估的统计严谨性。工程层面，超低比特量化、稀疏注意力与KV缓存优化持续突破服务效率瓶颈。扩散模型与流匹配广泛融入物理、材料和气象等科学计算，严格约束生成成为热点。此外，世界模型在具身规划中的实时性、记忆机制和量化适配取得显著进展，非线性动力学等跨学科理论也为解释大模型内在机理提供了新视角，整体展现出基础理论、算法创新与产业需求高度交织的特征。</p>
+
+<h4>话题分布</h4>
+
+<div class="table-wrap"><table>
+<tr>
+<th>#</th>
+<th>话题方向</th>
+<th>论文数</th>
+<th>占比</th>
+<th>描述</th>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>大语言模型训练、对齐与推理优化</strong></td>
+<td>45</td>
+<td>████ 21.3%</td>
+<td>聚焦大语言模型的监督微调、强化学习对齐、推理时扩展、采样策略及训练理论，涵盖自改进、奖励优化、对齐动力学等核心问题。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>强化学习、智能体与决策规划</strong></td>
+<td>33</td>
+<td>███ 15.6%</td>
+<td>涵盖离线/在线强化学习、多智能体协作、世界模型规划、工具调用智能体及游戏与科学发现中的自主决策。</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>多模态、视觉语言模型与视频理解</strong></td>
+<td>26</td>
+<td>██ 12.3%</td>
+<td>研究视觉语言模型的证据融合、幻觉治理、视频长序列理解、多模态推理奖励及跨模态检索与生成。</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>扩散模型与生成式建模理论</strong></td>
+<td>24</td>
+<td>██ 11.4%</td>
+<td>探索流匹配、扩散模型的采样校正、物理约束生成、多模态生成及扩散模型在科学与工程领域的应用。</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>模型压缩、量化与高效服务系统</strong></td>
+<td>22</td>
+<td>██ 10.4%</td>
+<td>研究低比特量化、知识蒸馏、稀疏注意力、KV缓存优化及高吞吐推理引擎，解决大模型部署中的内存、延迟与算力约束。</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>优化理论、算法与数值方法</strong></td>
+<td>21</td>
+<td>█ 10.0%</td>
+<td>包括随机凸优化、约束优化、贝叶斯优化、预条件子、在线学习及张量分解等基础优化算法与理论分析。</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>科学机器学习与物理信息神经网络</strong></td>
+<td>20</td>
+<td>█ 9.5%</td>
+<td>将机器学习与物理规律结合，应用于流体、气象、材料、分子、船舶及航天等科学工程领域的建模与反演。</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>可信AI、公平性、隐私与安全验证</strong></td>
+<td>12</td>
+<td>█ 5.7%</td>
+<td>研究模型校准、偏见审计、公平排序、联邦学习鲁棒性、数据隐私保护及神经网络形式化验证。</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>表格、图与结构化数据学习</strong></td>
+<td>8</td>
+<td>█ 3.8%</td>
+<td>针对表格数据基础模型、特征工程、图神经网络链接预测、聚类及结构化数据表示学习展开研究。</td>
+</tr>
+</table></div>
+
+<h4>重点论文推荐</h4>
+
+<h3>1. <a href="https://arxiv.org/abs/2611.23216" target="_blank">Higher-Scoring Coding Models Did Not Get More Work Done</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.23216</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 代码大模型, 基准评估, 生产力, 自然实验</li>
+<li><strong>推荐理由</strong>: 论文利用真实的模型访问禁令这一自然实验，首次严谨检验了编程基准分数与实际生产工作产出之间的脱节，挑战了行业以基准分数迭代模型的主流评价体系。其结论对代码大模型的评估标准和工业落地具有极强的现实指导意义。</li>
+</ul>
+
+<h3>2. <a href="https://arxiv.org/abs/2611.23219" target="_blank">Do LLM Agents Still Need to Be Told How to Self-Improve?</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.23219</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: LLM智能体, 自改进, 自主学习, 后训练</li>
+<li><strong>推荐理由</strong>: 该论文直击大模型智能体自改进的核心范式问题，探讨强能力模型是否仍需人类显式指定自改进流程，对未来自主智能体的训练框架设计具有方向性影响。研究问题具有高度前瞻性，可能重塑后训练阶段的自动化边界。</li>
+</ul>
+
+<h3>3. <a href="https://arxiv.org/abs/2611.22947" target="_blank">The Kernel Reality Check: Benchmarking and Distilling Efficient Attention at Scale</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22947</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 高效注意力, 核方法, 基准测试, 长上下文</li>
+<li><strong>推荐理由</strong>: 针对线性核注意力方法五年的研究热潮，该工作提供了大规模、公平的系统性基准评测，并进行方法蒸馏，厘清了各类高效注意力机制的真实性能与适用边界。研究有助于终结该领域的碎片化对比，为长上下文模型架构选型提供关键依据。</li>
+</ul>
+
+<h3>4. <a href="https://arxiv.org/abs/2611.21983" target="_blank">Large Language Models as Nonlinear Dynamical Systems: The Three Clocks of Depth, Training, and Generation</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.21983</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 非线性动力学, Transformer机理, 混沌, 分岔</li>
+<li><strong>推荐理由</strong>: 该工作将Transformer在深度、训练步数和生成token三个时间尺度上的行为统一纳入非线性动力学框架，利用不动点、分岔、混沌等经典概念解释模型机制。这种跨学科视角为理解大模型内部机理提供了全新的理论语言，具有深远的基础研究潜力。</li>
+</ul>
+
+<h3>5. <a href="https://arxiv.org/abs/2611.22227" target="_blank">SOTA or Luck? The Winner&#x27;s Curse in LLM Leaderboards</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22227</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 大模型排行榜, 赢者诅咒, 模型评估, 统计噪声</li>
+<li><strong>推荐理由</strong>: 论文揭示了大模型排行榜中因噪声分数和排名选择导致的“赢者诅咒”，从统计学角度解释了顶尖模型性能被系统性高估的现象。该研究对规范模型评估、理性看待SOTA声明以及构建更科学的排行榜具有重要学术与产业价值。</li>
+</ul>
+
+
+<h4>研究趋势</h4>
+
+<p><strong>1. 推理时计算与训练后优化成为大模型能力提升的核心抓手</strong></p>
+
+<p>多篇论文聚焦推理时采样预算分配（14）、GRPO等强化学习算法的失效修复（22）、扩散强化学习的定向探索（143）以及异步RL的稳定性（192），显示行业正从单纯扩大预训练规模转向深挖推理与后训练阶段的计算效率。</p>
+
+<p><strong>2. 世界模型与具身智能的规划效率和物理落地加速融合</strong></p>
+
+<p>针对JEPA风格世界模型的规划硬件协同设计（87）、潜在陷阱规避（88）、专用量化技术（177）以及可执行感知记忆（106）等研究密集出现，表明世界模型正从概念验证走向满足实时控制、低资源部署的工程化阶段。</p>
+
+<p><strong>3. 模型评估范式从静态基准分数转向真实任务效用与统计严谨性</strong></p>
+
+<p>代码模型实际生产力检验（6）、排行榜赢者诅咒分析（117）、检索增强VLM的理想观察者对比（20）以及工程判断基准EJBench（196），共同反映出学界对基准过拟合、分数失真和模型真实能力脱节问题的集体反思。</p>
+
+<p><strong>4. 物理约束与生成模型深度结合，赋能科学领域的逆问题求解</strong></p>
+
+<p>流匹配被用于满足严格守恒律的流场重建（82）、物理场超分辨的约束等变性（53）、海温预测的物理先验注入位置研究（19）以及分子光谱多模态生成（135），体现了生成式AI在硬科学场景中对可靠性和物理一致性的追求。</p>
+
+<p><strong>5. 超低比特量化与系统级协同优化逼近部署效率极限</strong></p>
+
+<p>研究覆盖二值化LoRA（100）、自适应温度量化（132）、近最优张量编码量化（148）、Blackwell架构混合精度部署（156）及Gemma 4 KV缓存全局压缩（37），量化创新已深入到硬件指令、内核适配和缓存架构的全栈层面。</p>
+
+
+<hr/>
+
+<h3>计算语言学 (NLP) (102 篇)</h3>
+
+<p><strong>概述</strong>: 本次arXiv当日102篇NLP领域论文呈现出技术深化与场景落地并行的特征，研究覆盖大模型基础架构、智能体系统、评测可信、检索增强、多语言处理、机理可解释性及垂直应用七大方向。智能体相关研究占比最高，聚焦工程化落地与治理全链路；模型机理研究普遍引入因果干预方法，推动可解释性从相关性向因果性升级；评测体系向文化多元、垂直细分、方法论自省方向发展，填补了多个非英语场景与细分领域的基准空白。同时，全链路效率优化、跨文化深度适配、RAG技术迭代等方向也涌现出多项创新性成果，整体研究既关注底层技术的理论突破，也重视实际落地的痛点解决，反映出NLP领域从能力爆发向稳健落地的阶段转变。</p>
+
+<h4>话题分布</h4>
+
+<div class="table-wrap"><table>
+<tr>
+<th>#</th>
+<th>话题方向</th>
+<th>论文数</th>
+<th>占比</th>
+<th>描述</th>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>智能体技术与多智能体系统</strong></td>
+<td>22</td>
+<td>████ 21.6%</td>
+<td>围绕LLM智能体的任务分配、工具调用、记忆管理、安全治理、技能维护、多智能体协作与辩论等方向，覆盖智能体在企业、科研、代码等场景的落地技术与评估体系。</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>模型评估、基准测试与可信度</strong></td>
+<td>21</td>
+<td>████ 20.6%</td>
+<td>构建多语言、多领域、多模态的评测基准，研究模型偏见、安全对齐、量化鲁棒性、排行榜偏差、事实核查等可信度问题，覆盖通用、医疗、金融、教育等垂直场景。</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>大模型基础架构与训练优化</strong></td>
+<td>18</td>
+<td>███ 17.6%</td>
+<td>聚焦Transformer架构改进、预训练归纳偏置、注意力机制优化、MoE路由机制、量化压缩、扩散语言模型等底层模型技术，覆盖模型训练、推理全链路的性能与效率优</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>检索增强与文本生成技术</strong></td>
+<td>12</td>
+<td>██ 11.8%</td>
+<td>研究检索增强生成（RAG）的上下文优化、稠密检索鲁棒性、长文档编辑、页面分割、文本到SQL、报告生成等技术，提升生成内容的事实性与任务适配性。</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>垂直领域NLP应用</strong></td>
+<td>12</td>
+<td>██ 11.8%</td>
+<td>覆盖医疗、金融、法律、专利、海事、工程等垂直领域的NLP落地技术，包括临床实体识别、ICD编码、金融情感分析、法律检索、工程判断等场景化任务。</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>模型可解释性与认知机理</strong></td>
+<td>9</td>
+<td>█ 8.8%</td>
+<td>通过注意力分析、神经元社区发现、因果干预、道德回路识别等手段，探究大模型的内部表征、推理机制与认知规律，揭示模型能力的底层来源。</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>多语言与低资源语言处理</strong></td>
+<td>8</td>
+<td>█ 7.8%</td>
+<td>针对低资源语言、方言与跨文化场景，研究多语言模型适配、文化适配翻译、本土语言基准构建、多语言信息可视化问答等技术，弥补英语中心模型的能力短板。</td>
+</tr>
+</table></div>
+
+<h4>重点论文推荐</h4>
+
+<h3>1. <a href="https://arxiv.org/abs/2611.23218" target="_blank">What Does a Bias Head Measure? Non-Identifiability in Head-Level Bias Attribution</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.23218</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 社会偏见, 注意力头, 可解释性, 模型公平性, 因果审计</li>
+<li><strong>推荐理由</strong>: 该论文首次系统审计了大模型注意力头偏见归因方法的有效性，指出当前主流的偏见头定位与消融方法仅通过公平性指标验证，缺乏对统计量本身是否真正测量偏见的证据，在两款主流开源模型上验证了归因的不可识别性问题。研究直击模型可解释性与公平性领域的核心方法论缺陷，对后续偏见检测与模型对齐研究具有重要的纠偏价值。</li>
+</ul>
+
+<h3>2. <a href="https://arxiv.org/abs/2611.22120" target="_blank">What MoE Routing Controls: Causal Interventions on Expert Trajectories</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22120</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 混合专家模型, 路由机制, 因果干预, 专家轨迹, 模型机理</li>
+<li><strong>推荐理由</strong>: 论文针对混合专家（MoE）模型的路由机制开展因果干预研究，通过强制令牌沿指定专家路径传播，首次清晰揭示了MoE路由对模型概念表征与角色信息处理的实际控制作用。研究填补了MoE内部机理认知的空白，为MoE模型的可控生成、专家优化与效率提升提供了关键的理论支撑。</li>
+</ul>
+
+<h3>3. <a href="https://arxiv.org/abs/2611.22766" target="_blank">StitchRAG: Constructing Compact and Evidence-Preserving Contexts for RAG with Diffusion-Based Stitching</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22766</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 检索增强生成, 扩散模型, 上下文压缩, 证据保留, 高效推理</li>
+<li><strong>推荐理由</strong>: 该论文提出的StitchRAG框架针对RAG长上下文噪声大、计算开销高的痛点，基于扩散拼接技术构建紧凑且保留证据的上下文，在保证事实准确性的同时显著降低推理成本。研究切中当前RAG落地的核心瓶颈，技术路径新颖，具备较强的工程落地潜力，对检索增强生成领域的技术演进有重要参考价值。</li>
+</ul>
+
+<h3>4. <a href="https://arxiv.org/abs/2611.22580" target="_blank">AfriNORM: An Evaluation Benchmark for Normative Reasoning of LLMs Across African Cultures</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22580</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 非洲文化, 规范推理, 评测基准, 跨文化AI, 大语言模型</li>
+<li><strong>推荐理由</strong>: 论文构建了首个覆盖非洲多元文化的大模型规范推理评测基准，突破了现有基准侧重语言流畅性、忽视文化适配能力的局限，能够系统评估大模型在非西方文化语境下的价值判断与推理能力。研究填补了低资源文化区域大模型评测的空白，对推动多语言、跨文化AI的公平性发展具有重要的社会价值与学术意义。</li>
+</ul>
+
+<h3>5. <a href="https://arxiv.org/abs/2611.22186" target="_blank">Is 4-Bit Quantization More Than Noise to a Chat Model&#x27;s Safety Behaviour? Attributing Behavioural Shifts with Matched Perturbations</a></h3>
+
+<ul>
+<li><strong>arXiv ID</strong>: <code>2611.22186</code></li>
+<li><strong>推荐等级</strong>: 🔥 重点关注</li>
+<li><strong>关键词</strong>: 4比特量化, 模型安全, 对齐鲁棒性, 权重扰动, 安全审计</li>
+<li><strong>推荐理由</strong>: 该论文通过匹配扰动的对照实验，严谨区分了4比特量化本身与同量级随机权重扰动对对话模型安全行为的影响，澄清了此前量化安全审计中结论矛盾的核心原因。研究直面端侧部署大模型的安全痛点，方法论严谨，结论对量化模型的安全评估与端侧AI落地具有直接的指导意义。</li>
+</ul>
+
+
+<h4>研究趋势</h4>
+
+<p><strong>1. 智能体研究从能力验证转向全生命周期的工程化与治理，覆盖任务调度、记忆优化、安全防护、技能维护到场景化评测的完整链路</strong></p>
+
+<p>本次共有22篇智能体相关论文，既包含动态任务分配、多粒度记忆检索、工具调用探索优化等核心技术，也覆盖智能体治理的运行时验证、注入攻击防御、技能老化维护，以及企业办公、临床诊断、代码开发等场景的专用基准，研究重心从单点能力转向落地全流程。</p>
+
+<p><strong>2. 模型机理研究从相关性分析转向因果干预，通过可控实验揭示大模型内部组件与能力的因果关联</strong></p>
+
+<p>多篇论文采用因果干预方法开展机理研究，如通过专家路径干预解析MoE路由的控制作用、通过消融实验审计偏见头的实际测量效果、通过极性组合假设验证否定推理的因果机制，突破了传统相关性分析的局限，推动可解释性研究向因果层面深化。</p>
+
+<p><strong>3. 评测体系向文化多元化、场景垂直化、维度精细化方向发展，弥补通用基准的覆盖盲区</strong></p>
+
+<p>本次发布了多个特色评测基准，覆盖非洲文化规范推理、荷兰语单词谜题、波斯语法律RAG、危机咨询、工程判断等细分场景，同时出现了针对排行榜幸存者偏差、量化安全偏移、临床基准后见之明偏差等评测方法论本身的审计研究，评测的严谨性与覆盖度持续提升。</p>
+
+<p><strong>4. 效率优化覆盖模型训练、推理、部署全链路，低资源场景与端侧部署成为重要优化方向</strong></p>
+
+<p>研究涵盖数据高效微调、KV缓存内存优化、混合精度量化、稀疏注意力、扩散语言模型推理加速等多个方向，同时针对低资源语言适配、小参数智能体、端侧模型安全等场景提出专用优化方案，在大模型规模持续增长的背景下，效率与普惠性成为核心研究目标。</p>
+
+<p><strong>5. 多语言研究从语言翻译转向深度文化适配，低资源语言的文化与场景能力得到重点关注</strong></p>
+
+<p>相关研究不再局限于低资源语言的翻译准确率，而是延伸到食谱的跨文化适配、非洲本土文化的规范推理、荷兰方言的社会态度测量、多语言信息可视化理解等深层文化能力，反映出多语言NLP从“语言可用”向“文化适配”的阶段升级。</p>
+
+
+<hr/>
+
+<h2>三、跨领域综合分析</h2>
+
+<h3>跨领域研究热点</h3>
+
+<p><strong>1. 多模态大模型与视觉语言模型</strong></p>
+
+<ul>
+<li>涉及领域: 计算机视觉, 人工智能, 机器学习</li>
+<li>多模态大模型与视觉语言模型同时出现在计算机视觉、人工智能和机器学习的热点中，体现出从视觉理解、视频生成到通用智能体感知能力的共同需求。相关研究既关注模型架构与推理优化，也关注幻觉、覆盖率、视频理解和跨模态交互等实际问题，是连接感知与决策的核心方向。</li>
+</ul>
+
+<p><strong>2. 世界模型、视频生成与仿真数据</strong></p>
+
+<ul>
+<li>涉及领域: 计算机视觉, 机器人, 人工智能, 机器学习</li>
+<li>世界模型在视频生成、机器人仿真和智能体决策中均占据重要位置，用于建模环境动态、生成训练数据并支撑规划与控制。机器人领域利用世界模型生成失败数据，视觉领域推进交互式视频生成，人工智能与机器学习则将其作为智能体理解和干预环境的基础。</li>
+</ul>
+
+<p><strong>3. 智能体架构、自进化与安全治理</strong></p>
+
+<ul>
+<li>涉及领域: 人工智能, 机器人, 机器学习, 计算语言学</li>
+<li>智能体研究已从单一任务执行扩展到自主改进、多智能体协作、工具使用和跨组织信任基础设施。机器学习和人工智能重点探讨自改进范式与运行时框架，机器人强调交互式具身操作，NLP则关注智能体系统、评估基准与可信行为，安全、对齐和问责成为并行主线。</li>
+</ul>
+
+<p><strong>4. 大模型训练、推理优化与高效架构</strong></p>
+
+<ul>
+<li>涉及领域: 人工智能, 机器学习, 计算语言学</li>
+<li>大模型训练与推理优化贯穿人工智能、机器学习和NLP，覆盖高效注意力、模型压缩、MoE路由、量化和服务系统等方向。今日论文不仅追求效率提升，还通过严谨基准和因果分析重新评估现有方法的真实收益，反映出研究社区对规模化系统成本与可解释性的重视。</li>
+</ul>
+
+<p><strong>5. 模型评估、基准可信度与安全审计</strong></p>
+
+<ul>
+<li>涉及领域: 人工智能, 机器学习, 计算语言学, 计算机视觉</li>
+<li>多个领域都在反思传统基准与评测指标的有效性，包括编码模型分数与生产产出脱节、排行榜噪声、视觉语言模型偏好优化副作用以及量化和注意力头偏见归因问题。这类研究强调真实任务、因果干预和跨场景安全审计，推动大模型评估从单点指标转向可信、可问责的综合评价。</li>
+</ul>
+
+<h3>今日最值得关注论文 (跨领域)</h3>
+
+<p><strong>1. <a href="https://arxiv.org/abs/2611.23216" target="_blank">Higher-Scoring Coding Models Did Not Get More Work Done</a></strong></p>
+
+<ul>
+<li>领域: 机器学习</li>
+<li>理由: 该研究利用真实自然实验检验编程基准分数与实际生产产出之间的脱节，同时入选人工智能与机器学习候选并获得机器学习最高分。其结论直接挑战行业唯排行榜论，对编码模型研发、企业选型和评测体系设计都具有很强的现实影响。</li>
+</ul>
+
+<p><strong>2. <a href="https://arxiv.org/abs/2611.23138" target="_blank">RSI-Prime: Training Models to Train Models</a></strong></p>
+
+<ul>
+<li>领域: 人工智能</li>
+<li>理由: 该论文直面递归自我改进这一通向通用人工智能的核心命题，首次系统化研究大模型自主执行模型训练的能力。它为智能体自主迭代、自动化机器学习和未来模型研发流程的重构提供了重要框架，具有突出的长期意义。</li>
+</ul>
+
+<p><strong>3. <a href="https://arxiv.org/abs/2611.22584" target="_blank">InteractVLA: Turning VLAs into Interactive Tools for Agentic Robotic Manipulation</a></strong></p>
+
+<ul>
+<li>领域: 机器人</li>
+<li>理由: 该工作针对视觉语言动作模型在陌生指令和场景扰动下盲目重试的问题，将预训练VLA转化为可交互、可调控的机器人操作工具。它连接多模态大模型与具身智能，推动机器人从固定策略执行走向可反馈、可协作的智能体式操作。</li>
+</ul>
+
+<p><strong>4. <a href="https://arxiv.org/abs/2611.23219" target="_blank">Do LLM Agents Still Need to Be Told How to Self-Improve?</a></strong></p>
+
+<ul>
+<li>领域: 机器学习</li>
+<li>理由: 论文聚焦大模型智能体自改进的根本范式问题，探讨强能力模型是否仍需要人类显式规定改进流程。该问题关系到自主智能体的训练框架、人类监督边界和未来自动化能力增长，是智能体研究中兼具理论深度与实践价值的方向。</li>
+</ul>
+
+<h3>今日总结与展望</h3>
+
+<p>今日arXiv论文呈现出大模型研究从能力扩张转向体系化、可信化和具身化的整体趋势。计算机视觉领域以4D场景基础模型、像素级跨模态推理和低延迟视频生成为代表，持续强化模型对空间、时间和多模态信息的统一理解；机器人领域则将视觉语言模型、世界模型和安全控制结合，关注交互式操作、失败数据生成、复杂环境建图以及腿足机器人的真实运行约束。人工智能与机器学习的主线集中在智能体自进化、递归自我改进、编码效能和训练推理优化，同时多篇论文对基准分数、排行榜和高效注意力的真实价值提出严格反思。NLP研究进一步深入MoE路由、RAG上下文构建、低资源文化评测、偏见归因和量化安全，显示出社区对模型内部机制与社会适配性的关注。总体来看，未来研究将更强调真实环境中的端到端能力、跨模态感知与行动闭环，以及面向自主系统的安全、评估和治理基础设施。</p>
+
+
+<hr/>
+
+<h2>附录: 数据说明</h2>
+
+<ul>
+<li>论文数据来源于 arXiv RSS 订阅源</li>
+<li>分析由大语言模型自动生成，结果仅供参考</li>
+<li>推荐等级基于 LLM 对摘要的初步评估，不代表论文完整质量，建议结合全文判断</li>
+</ul>
+</div></div>
+  <div id="panel-papers" class="tab-panel">
+<div class="topics-bar">🔥 热点话题: <span class="topic-tag">多模态大模型与视觉语言模型</span><span class="topic-tag">视频生成与世界模型</span><span class="topic-tag">3D视觉与场景重建</span><span class="topic-tag">医学影像与病理计算</span><span class="topic-tag">图像生成与扩散模型优化</span><span class="topic-tag">机器人与自动驾驶感知</span><span class="topic-tag">事件相机与新型视觉传感器</span><span class="topic-tag">遥感与环境视觉应用</span><span class="topic-tag">视觉模型安全、可解释性与鲁棒性</span><span class="topic-tag">底层视觉与图像压缩修复</span><span class="topic-tag">机器人学习与生成式策略</span><span class="topic-tag">运动规划、控制与安全</span><span class="topic-tag">移动、腿足与人形机器人</span><span class="topic-tag">仿真、世界模型与数据生成</span><span class="topic-tag">定位、建图与状态估计</span></div>
+<div class="toolbar">
+  <input type="text" id="paper-search" class="search-box" placeholder="搜索论文标题、作者、摘要（支持中文）...">
+  <div class="sort-btns">
+    <button class="sort-btn active" data-sort="default">默认排序</button>
+    <button class="sort-btn" data-sort="score">按推荐度排序 ↓</button>
+  </div>
+  <div class="filter-btns"><button class="filter-btn active" data-cat="all">全部</button><button class="filter-btn" data-cat="cs.CV">计算机视觉 (Computer Vision) (207)</button><button class="filter-btn" data-cat="cs.RO">机器人 (Robotics) (89)</button><button class="filter-btn" data-cat="cs.AI">人工智能 (Artificial Intelligence) (259)</button><button class="filter-btn" data-cat="cs.LG">机器学习 (Machine Learning) (211)</button><button class="filter-btn" data-cat="cs.CL">计算语言学 (NLP) (102)</button></div>
+</div>
+<div class="paper-count" id="paper-count">共 610 篇论文</div>
+<div class="paper-list"></div></div>
+</div>
+</div>
+<script>
+function _escapeHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var group = this.closest('.page-tabs');
+      group.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+      this.classList.add('active');
+      var target = this.dataset.tab;
+      group.parentElement.querySelectorAll('.tab-panel').forEach(function(p){
+        p.classList.remove('active');
+      });
+      document.getElementById(target).classList.add('active');
+      if (target === 'panel-papers') loadPapers();
+    });
+  });
+
+  // Search
+  var searchBox = document.getElementById('paper-search');
+  if (searchBox) {
+    searchBox.addEventListener('input', filterPapers);
+  }
+
+  // Category filter
+  document.querySelectorAll('.filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      filterPapers();
+    });
+  });
+
+  // Sort
+  document.querySelectorAll('.sort-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.sort-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      sortPapers(this.dataset.sort);
+    });
+  });
+
+  // Expand abstract (toggle both EN and ZH)
+  document.querySelectorAll('.expand-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var card = this.closest('.paper-card');
+      var absEn = card.querySelector('.paper-abstract');
+      var absZh = card.querySelector('.paper-abstract-zh');
+      if (absEn) absEn.classList.toggle('expanded');
+      if (absZh) absZh.classList.toggle('expanded');
+      var expanded = absEn && absEn.classList.contains('expanded');
+      this.textContent = expanded ? '收起' : '展开';
+    });
+  });
+});
+
+function filterPapers() {
+  var query = (document.getElementById('paper-search').value || '').toLowerCase();
+  var activeFilter = document.querySelector('.filter-btn.active');
+  var category = activeFilter ? activeFilter.dataset.cat : 'all';
+  var cards = document.querySelectorAll('.paper-card');
+  var visible = 0;
+
+  cards.forEach(function(card) {
+    var title = card.dataset.title || '';
+    var abs = card.dataset.abstract || '';
+    var cat = card.dataset.category || '';
+    var authors = card.dataset.authors || '';
+
+    var titleZh = card.dataset.titleZh || '';
+    var absZh = card.dataset.abstractZh || '';
+
+    var matchText = !query || title.indexOf(query) > -1 || abs.indexOf(query) > -1
+      || authors.indexOf(query) > -1 || titleZh.indexOf(query) > -1 || absZh.indexOf(query) > -1;
+    var matchCat = category === 'all' || (' ' + cat + ' ').indexOf(' ' + category + ' ') > -1;
+
+    if (matchText && matchCat) {
+      card.style.display = '';
+      visible++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  var counter = document.getElementById('paper-count');
+  if (counter) counter.textContent = '显示 ' + visible + ' / ' + cards.length + ' 篇';
+}
+
+function sortPapers(mode) {
+  var list = document.querySelector('.paper-list');
+  if (!list) return;
+  var cards = Array.prototype.slice.call(list.querySelectorAll('.paper-card'));
+  cards.sort(function(a, b) {
+    if (mode === 'score') {
+      var sa = parseInt(a.dataset.score) || 0;
+      var sb = parseInt(b.dataset.score) || 0;
+      if (sa !== sb) return sb - sa;
+    }
+    return parseInt(a.dataset.index || 0) - parseInt(b.dataset.index || 0);
+  });
+  cards.forEach(function(card) { list.appendChild(card); });
+}
+
+function renderPaperCard(p, idx) {
+  var e = _escapeHtml;
+  var scoreHtml = '';
+  if (p.score >= 8) scoreHtml = '<span class="score-badge score-high">🔥 重点关注</span>';
+  else if (p.score >= 5) scoreHtml = '<span class="score-badge score-mid">⭐ 推荐阅读</span>';
+  else if (p.score > 0) scoreHtml = '<span class="score-badge score-low">📌 值得关注</span>';
+  var titleZhHtml = p.title_zh ? '<div class="paper-title-zh">' + e(p.title_zh) + '</div>' : '';
+  var absZhHtml = p.summary_zh
+    ? '<div class="paper-abstract-zh"><span class="label">中文摘要</span>' + e(p.summary_zh) + '</div>'
+    : '';
+  var tagsHtml = '';
+  if (p.announce_type && p.announce_type !== 'unknown')
+    tagsHtml += '<span class="paper-tag highlight">' + e(p.announce_type) + '</span>';
+  p.cat_tags.forEach(function(c) {
+    tagsHtml += '<span class="paper-tag' + (c.hl ? ' highlight' : '') + '">' + e(c.name) + '</span>';
+  });
+  return '<div class="paper-card" data-title="' + e(p.title.toLowerCase()) + '"'
+    + ' data-abstract="' + e((p.abstract||'').substring(0,500).toLowerCase()) + '"'
+    + ' data-title-zh="' + e((p.title_zh||'').toLowerCase()) + '"'
+    + ' data-abstract-zh="' + e((p.summary_zh||'').substring(0,500).toLowerCase()) + '"'
+    + ' data-category="' + e((p.all_cats || [p.primary_cat]).join(' ')) + '"'
+    + ' data-authors="' + e(p.authors.toLowerCase()) + '"'
+    + ' data-score="' + p.score + '" data-index="' + idx + '">'
+    + '<div class="paper-title"><a href="' + e(p.abs_url) + '" target="_blank">' + e(p.title) + '</a> ' + scoreHtml + '</div>'
+    + titleZhHtml
+    + '<div class="paper-meta">' + e(p.authors) + '</div>'
+    + '<div class="paper-abstract">' + e(p.abstract) + '</div>'
+    + absZhHtml
+    + '<button class="expand-btn">展开</button>'
+    + '<div class="paper-tags">' + tagsHtml + '</div>'
+    + '<div class="paper-actions">'
+    + '<a href="' + e(p.abs_url) + '" target="_blank">📄 Abstract</a>'
+    + '<a href="' + e(p.pdf_url) + '" target="_blank">📥 PDF</a>'
+    + '</div></div>';
+}
+
+function renderPaperList(papers) {
+  var list = document.querySelector('.paper-list');
+  if (!list) return;
+  var html = '';
+  papers.forEach(function(p, i) { html += renderPaperCard(p, i); });
+  list.innerHTML = html;
+  setupExpandButtons();
+}
+
+function setupExpandButtons() {
+  document.querySelectorAll('.expand-btn').forEach(function(btn) {
+    btn.onclick = function() {
+      var card = this.closest('.paper-card');
+      var absEn = card.querySelector('.paper-abstract');
+      var absZh = card.querySelector('.paper-abstract-zh');
+      if (absEn) absEn.classList.toggle('expanded');
+      if (absZh) absZh.classList.toggle('expanded');
+      var expanded = absEn && absEn.classList.contains('expanded');
+      this.textContent = expanded ? '收起' : '展开';
+    };
+  });
+}
+
+var _papersLoaded = false;
+function loadPapers() {
+  if (_papersLoaded) return;
+  var list = document.querySelector('.paper-list');
+  if (!list) return;
+  list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">📦 加载论文数据中...</div>';
+  fetch('papers.json').then(function(r) { return r.json(); }).then(function(papers) {
+    _papersLoaded = true;
+    renderPaperList(papers);
+  }).catch(function(err) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">论文数据加载失败</div>';
+  });
+}
+</script>
+</body>
+</html>
